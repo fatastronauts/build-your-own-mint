@@ -1,3 +1,16 @@
+Note: the below stuff is the instructions from the original [author](https://github.com/yyx990803). To my knowledge, they should still work with the changes I've made to the repo. I've added prettier and some string comparison tools. Also, I've added my own logic to `lib/transform.js` and `lib/fetch.js` to describe how the data is written to the Google spreadsheet. Here's a description of each column along with its format:
+
+```
+Date: YYYY-MM-DD
+Account: Name of account from your calls to npm run token-plaid.
+Description: A string, generally contains merchant name and such.
+Amount: Integers with charges as positive numbers and payments as negative numbers.
+Category1: A description of what the category the expense is such as "Food and Drink". One expense may have many categories (necessatiating the next 2 column headers).
+Category2: Ibid.
+Category3: Ibid.
+Retrieval String: Name of machine that retrieved data and datetime it was retrieved at. Helpful for debugging and seeing last update.
+```
+
 # Build Your Own Mint
 
 ## Important Disclaimer
