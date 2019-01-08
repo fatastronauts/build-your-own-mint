@@ -5,11 +5,12 @@
   "author": "Evan You",
   "license": "MIT",
   "scripts": {
-    "test": "node index.js",
+    "get": "node --icu-data-dir=node_modules/full-icu index.js",
     "test-plaid": "node scripts/testPlaid.js",
     "test-sheets": "node scripts/testSheets.js",
     "token-plaid": "node scripts/plaidServer.js",
-    "token-sheets": "node scripts/getSheetsToken.js"
+    "token-sheets": "node scripts/getSheetsToken.js",
+    "lint": "prettier --write **/*.js scripts/plaid.css"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
@@ -17,8 +18,12 @@
     "ejs": "^2.6.1",
     "express": "^4.16.4",
     "fs-extra": "^7.0.1",
+    "full-icu": "^1.2.1",
     "googleapis": "27",
     "moment": "^2.23.0",
     "plaid": "^2.10.0"
+  },
+  "devDependencies": {
+    "prettier": "^1.15.3"
   }
 }
