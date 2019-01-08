@@ -10,7 +10,7 @@
     "test-sheets": "node scripts/testSheets.js",
     "token-plaid": "node scripts/plaidServer.js",
     "token-sheets": "node scripts/getSheetsToken.js",
-    "lint": "prettier --write **/*.js scripts/plaid.css"
+    "lint": "prettier --write **/*.js scripts/plaid.css .circleci/config.yml"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
