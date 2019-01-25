@@ -11,6 +11,8 @@ Category3: Ibid.
 Retrieval String: Name of machine that retrieved data and datetime it was retrieved at. Helpful for debugging and seeing last update.
 ```
 
+Note that I made a few changes that are NOT documented here. If anyone ends up using my version of this and wants to know what they are, open an issue and I'll properly document them.
+
 # Build Your Own Mint
 
 ## Important Disclaimer
