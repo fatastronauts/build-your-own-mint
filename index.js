@@ -1,11 +1,17 @@
-require('dotenv').config()
+require('dotenv').config();
 
-const { fetchTransactions } = require('./lib/fetch')
-const { transformTransactionsToUpdates } = require('./lib/transform')
-const { updateSheet } = require('./lib/update')
+const { fetchTransactions, fetchBalances } = require('./lib/fetch');
+const {
+  transformTransactionsToUpdates,
+  transformBalancesToUpdates,
+} = require('./lib/transform');
+const { updateSheet } = require('./lib/update');
 
-;(async () => {
-  const transactions = await fetchTransactions()
-  const updates = transformTransactionsToUpdates(transactions)
-  updateSheet(updates)
-})()
+(async () => {
+  const transactions = await fetchTransactions();
+  const balances = await fetchBalances();
+  const updates = transformTransactionsToUpdates(transactions).concat(
+    transformBalancesToUpdates(balances),
+  );
+  updateSheet(updates);
+})();
