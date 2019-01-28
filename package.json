@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "body-parser": "^1.18.3",
+    "currency.js": "^1.2.1",
     "dotenv": "^6.2.0",
     "ejs": "^2.6.1",
     "express": "^4.16.4",
@@ -21,7 +22,8 @@
     "full-icu": "^1.2.1",
     "googleapis": "27",
     "moment": "^2.23.0",
-    "plaid": "^2.10.0"
+    "plaid": "^2.10.0",
+    "twilio": "^3.27.1"
   },
   "devDependencies": {
     "prettier": "^1.15.3"
