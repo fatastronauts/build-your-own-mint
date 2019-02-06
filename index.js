@@ -4,8 +4,9 @@ const { fetchTransactions, fetchBalances } = require('./lib/fetch'),
   {
     transformTransactionsToUpdates,
     transformBalancesToUpdates,
+    transformBalancesToSMSData,
   } = require('./lib/transform'),
-  { updateTransactions, updateBalances } = require('./lib/update');
+  { updateTransactions, updateBalances, sendSMS } = require('./lib/update');
 
 (async () => {
   const transactions = await fetchTransactions();
@@ -13,7 +14,9 @@ const { fetchTransactions, fetchBalances } = require('./lib/fetch'),
 
   const transactionUpdates = transformTransactionsToUpdates(transactions);
   const balanceUpdates = transformBalancesToUpdates(balances);
+  const smsUpdates = transformBalancesToSMSData(balances);
 
   updateTransactions(transactionUpdates);
   updateBalances(balanceUpdates);
+  sendSMS(smsUpdates);
 })();
