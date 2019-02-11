@@ -11,6 +11,7 @@ const { fetchTransactions, fetchBalances } = require('./lib/fetch'),
 (async () => {
   const transactions = await fetchTransactions();
   const balances = await fetchBalances();
+  console.log(balances.map(balance => balance.name));
 
   const transactionUpdates = transformTransactionsToUpdates(transactions);
   const balanceUpdates = transformBalancesToUpdates(balances);

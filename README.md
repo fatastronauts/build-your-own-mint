@@ -1,17 +1,4 @@
-Note: the below stuff is the instructions from the original [author](https://github.com/yyx990803). To my knowledge, they should still work with the changes I've made to the repo. I've added prettier and some string comparison tools. Also, I've added my own logic to `lib/transform.js` and `lib/fetch.js` to describe how the data is written to the Google spreadsheet. Here's a description of each column along with its format:
-
-```
-Date: YYYY-MM-DD
-Account: Name of account from your calls to npm run token-plaid.
-Description: A string, generally contains merchant name and such.
-Amount: Integers with charges as positive numbers and payments as negative numbers.
-Category1: A description of what the category the expense is such as "Food and Drink". One expense may have many categories (necessatiating the next 2 column headers).
-Category2: Ibid.
-Category3: Ibid.
-Retrieval String: Name of machine that retrieved data and datetime it was retrieved at. Helpful for debugging and seeing last update.
-```
-
-Note that I made a few changes that are NOT documented here. If anyone ends up using my version of this and wants to know what they are, open an issue and I'll properly document them.
+Note: the below stuff is the instructions from the original [author](https://github.com/yyx990803) with documentation of my own added in. In my opinion, my version has more features and generally meets the financial needs of most people better.
 
 # Build Your Own Mint
 
@@ -59,16 +46,31 @@ First things first - rename `.env.sample` to `.env`. Variables in this file will
 
 ## Transform your Data
 
-- With the APIs sorted out, now it's time to connect them. Open `lib/transform.js` - this is where you can write your own logic to map incoming transactions to cell updates. How to structure the spreadsheet to use that data is up to you.
+I've already written the transform logic for the repo. You want to have your spreadsheet contain two sheets. One of them (called `transactions`) should have the following headers: Date,Account,Description,Amount,Type,Category1,Category2,Category3,Category4,Retrieval String.
 
-- By default, the transaction date range is from the beginning of last month to now. You can adjust this in `lib/fetch.js`.
+You should have another sheet (called `balances`). This one is a little more tricky. Run `npm run get`. It should give an error but before it does, it should print out an array of your bank accounts that should look familiar to you. Now, create a json that has each account's name (_exactly_ as it appears) as the key and a unique column (anything that is C or greater) in the balances sheets as the value. It should look something like this:
 
-- Once you've setup your own transform logic, run `node index.js`. If everything works, your spreadsheet should have been updated.
+```
+{
+    "Bank1": "C",
+    "Bank2": "D",
+    ... etc
+}
 
-- This repo only handles transactions, but it should be pretty straightforward to add balances. (logic for fetching balances is in `fetch.js` already)
+```
+
+This JSON shows where each account goes in the sheet. Minify that JSON (if you google "minify json", you'll find many options. Note that I don't vouch for the security or trustworthiness of any of them) and set `ACCOUNT_MAPPING` in your `.env` to that minified JSON. Be very careful to not paste this in a js file or really anything but your `.env` - you don't want to tell the world what financial products you use.
+
+## Texting
+
+This is a totally optional feature. If you don't want it, set `ENABLE_SMS` to false and you can stop reading. Note that it costs around \$1.20 a month.
+
+If you are interested, go create a Twilio account and follow the instructions [here](https://www.twilio.com/docs/sms/quickstart/node). Then, set the environment variables that start with `TWILIO` in your `.env` to your Twilio account credentials. Set `USER_PHONE_NUMBER` to the number that should be texted. Finally, set `ENABLE_SMS` to true.
+
+This feature will text you everytime the script is run. It works best with CircleCI (below). I've found it helpful for displining my spending by forcing me to be aware of how much I have and am spending.
 
 ## Automate the Updates
 
-The repo contains a [CircleCI](https://circleci.com/) config file which runs the update every day at 5AM UTC (midnight US Eastern time). You can adjust the cron config to tweak the time/frequency of the updates. Note that your local `.env` is not checked into the repo, so you will need to copy all those env variables into your CircleCI project settings.
+The repo contains a [CircleCI](https://circleci.com/) config file which runs the update every day at 14PM UTC (8AM America/Chicago). You can adjust the cron config to tweak the time/frequency of the updates. Note that your local `.env` is not checked into the repo, so you will need to copy all those env variables into your CircleCI project settings.
 
 This is totally optional if you don't trust CI with your tokens. Just run it manually when you want to update things.

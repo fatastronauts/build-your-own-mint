@@ -1,8 +1,11 @@
 {
   "name": "build-your-own-mint",
-  "private": true,
+  "private": false,
   "main": "index.js",
-  "author": "Evan You",
+  "author": [
+    "Evan You",
+    "Benjamin Cooper"
+  ],
   "license": "MIT",
   "scripts": {
     "get": "node --icu-data-dir=node_modules/full-icu index.js",
