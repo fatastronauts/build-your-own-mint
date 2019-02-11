@@ -61,6 +61,8 @@ You should have another sheet (called `balances`). This one is a little more tri
 
 This JSON shows where each account goes in the sheet. Minify that JSON (if you google "minify json", you'll find many options. Note that I don't vouch for the security or trustworthiness of any of them) and set `ACCOUNT_MAPPING` in your `.env` to that minified JSON. Be very careful to not paste this in a js file or really anything but your `.env` - you don't want to tell the world what financial products you use.
 
+After this, `npm run get` should populate the transactions and balances sheet whenever it's run.
+
 ## Texting
 
 This is a totally optional feature. If you don't want it, set `ENABLE_SMS` to false and you can stop reading. Note that it costs around \$1.20 a month.
