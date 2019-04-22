@@ -1,5 +1,4 @@
 require('dotenv').config();
-
 const { fetchTransactions, fetchBalances } = require('./lib/fetch'),
   {
     transformTransactionsToUpdates,
