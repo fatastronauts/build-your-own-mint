@@ -1,12 +1,10 @@
-const dotenv = require('dotenv');
-dotenv.config();
+require('dotenv').config();
 
 const account = process.argv[2];
 if (!account) {
   throw new Error('An account name must be provided.');
 }
 
-const fs = require('fs');
 const util = require('util');
 const path = require('path');
 const moment = require('moment');
@@ -34,6 +32,7 @@ app.get('/', (req, res, next) => {
 
 const APP_PORT = 8080;
 let PUBLIC_TOKEN = null;
+let ACCESS_TOKEN = null;
 let ITEM_ID = null;
 
 function saveAccessToken(token) {
