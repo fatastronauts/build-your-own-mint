@@ -1,13 +1,23 @@
 require('dotenv').config();
-const { fetchTransactions, fetchBalances } = require('./lib/fetch'),
-  {
-    transformTransactionsToUpdates,
-    transformBalancesToUpdates,
-    transformBalancesToSMSData,
-  } = require('./lib/transform'),
-  { updateTransactions, updateBalances, sendSMS } = require('./lib/update');
+const { fetchTransactions, fetchBalances } = require('./lib/fetch');
+
+const {
+  transformTransactionsToUpdates,
+  transformBalancesToUpdates,
+  transformBalancesToSMSData,
+} = require('./lib/transform');
+
+const {
+  updateTransactions,
+  updateBalances,
+  getLastTransactionUpdateTime,
+} = require('./lib/updaters/gsheets');
+
+const { send } = require('./lib/updaters/sms');
 
 (async () => {
+  const last = await getLastTransactionUpdateTime();
+  console.log('last', last.format());
   const transactions = await fetchTransactions();
   const balances = await fetchBalances();
   console.log(balances.map(balance => balance.name));
@@ -18,5 +28,5 @@ const { fetchTransactions, fetchBalances } = require('./lib/fetch'),
 
   updateTransactions(transactionUpdates);
   updateBalances(balanceUpdates);
-  sendSMS(smsUpdates);
+  send(smsUpdates, true);
 })();
