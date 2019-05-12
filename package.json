@@ -17,19 +17,19 @@
     "lint": "prettier --write **/*.js scripts/plaid.css .circleci/config.yml README.md package.json"
   },
   "dependencies": {
-    "body-parser": "^1.18.3",
+    "body-parser": "^1.19.0",
     "currency.js": "^1.2.1",
     "dotenv": "^6.2.0",
     "ejs": "^2.6.1",
     "express": "^4.16.4",
     "fs-extra": "^7.0.1",
     "full-icu": "^1.2.1",
-    "googleapis": "27",
-    "moment": "^2.23.0",
-    "plaid": "^2.10.0",
-    "twilio": "^3.27.1"
+    "googleapis": "^39.2.0",
+    "moment": "^2.24.0",
+    "plaid": "^2.15.0",
+    "twilio": "^3.30.3"
   },
   "devDependencies": {
-    "prettier": "^1.15.3"
+    "prettier": "^1.17.0"
   }
 }
