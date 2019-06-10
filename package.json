@@ -9,7 +9,7 @@
   },
   "license": "MIT",
   "scripts": {
-    "get": "node --icu-data-dir=node_modules/full-icu index.js",
+    "get": "node index.js",
     "test-plaid": "node scripts/testPlaid.js",
     "test-sheets": "node scripts/testSheets.js",
     "token-plaid": "node scripts/plaidServer.js",
