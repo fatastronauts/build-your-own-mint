@@ -9,7 +9,8 @@
   },
   "license": "MIT",
   "scripts": {
-    "get": "node index.js",
+    "get": "node index.js --public",
+    "get-setup": "node index.js",
     "test-plaid": "node scripts/testPlaid.js",
     "test-sheets": "node scripts/testSheets.js",
     "token-plaid": "node scripts/plaidServer.js",
