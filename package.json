@@ -10,7 +10,7 @@
   "license": "MIT",
   "scripts": {
     "get": "node index.js --public",
-    "get-setup": "node index.js",
+    "get-private": "node index.js",
     "test-plaid": "node scripts/testPlaid.js",
     "test-sheets": "node scripts/testSheets.js",
     "token-plaid": "node scripts/plaidServer.js",
@@ -27,6 +27,7 @@
     "full-icu": "^1.2.1",
     "googleapis": "^39.2.0",
     "moment": "^2.24.0",
+    "open": "^6.3.0",
     "plaid": "^2.15.0",
     "twilio": "^3.30.3"
   },

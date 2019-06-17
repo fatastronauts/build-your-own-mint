@@ -1,4 +1,5 @@
 require('dotenv').config();
+const open = require('open');
 const { fetchTransactions, fetchBalances } = require('./lib/fetch');
 
 const {
@@ -34,7 +35,9 @@ const { send } = require('./lib/updaters/sms');
   const balanceUpdates = transformBalancesToUpdates(balances);
   const smsUpdates = transformBalancesToSMSData(balances);
 
-  updateTransactions(transactionUpdates);
-  updateBalances(balanceUpdates);
-  send(smsUpdates, true);
+  await updateTransactions(transactionUpdates);
+  await updateBalances(balanceUpdates);
+  await send(smsUpdates, true);
+
+  open(`https://docs.google.com/spreadsheets/d/${process.env.SHEETS_SHEET_ID}`);
 })();
