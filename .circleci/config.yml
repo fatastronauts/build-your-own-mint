@@ -35,7 +35,7 @@ workflows:
     triggers:
       - schedule:
           # 14 for 8am cst during DST, 13 otherwise.
-          cron: '0 13 * * *'
+          cron: '0 15 * * *'
           filters:
             branches:
               only:
