@@ -17,14 +17,16 @@ const FILTERED_VARIABLES = [
 const updateSingleToken = async (name, value) => {
   console.log(
     'Updated this pair: ' +
-      (await fetch(
-        `https://circleci.com/api/v1.1/project/github/${GITHUB_USERNAME}/${GITHUB_PROJECT}/envvar?circle-token=${CIRCLE_CI_TOKEN}`,
-        {
-          method: 'post',
-          body: JSON.stringify({ name, value }),
-          headers: { 'Content-Type': 'application/json' },
-        },
-      ).then(res => res.json())),
+      JSON.stringify(
+        await fetch(
+          `https://circleci.com/api/v1.1/project/github/${GITHUB_USERNAME}/${GITHUB_PROJECT}/envvar?circle-token=${CIRCLE_CI_TOKEN}`,
+          {
+            method: 'post',
+            body: JSON.stringify({ name, value }),
+            headers: { 'Content-Type': 'application/json' },
+          },
+        ).then(res => res.json()),
+      ),
   );
 };
 
