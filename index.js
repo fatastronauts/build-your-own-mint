@@ -23,7 +23,7 @@ const { send } = require('./lib/updaters/sms');
     console.log('last', last.format());
   } else
     console.log(
-      'Running in public mode, supressing logs with potentially private information. ',
+      'Running in public mode, suppressing logs with potentially private information. ',
     );
 
   const transactions = await fetchTransactions();
