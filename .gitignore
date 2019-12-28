@@ -7,3 +7,6 @@ node_modules
 # Allow
 !lib/rewards/cards/index.js
 !lib/rewards/cards/template.js
+
+# holds list of all accounts, probably shouldn't keep in public git repo
+accounts.secret.js
