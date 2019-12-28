@@ -17,19 +17,19 @@ const {
 const { send } = require('./lib/updaters/sms');
 
 (async () => {
+  const isPublic = process.argv[2] !== '--public'; // not public -> private
   // since this is often run in circleci free, it's probably wise to not log private stuff
-  if (process.argv[2] !== '--public') {
+  if (isPublic) {
     const last = await getLastTransactionUpdateTime();
     console.log('last', last.format());
   } else
     console.log(
-      'Running in public mode, suppressing logs with potentially private information. ',
+      'Running in public mode, suppressing logs with potentially private information.',
     );
 
-  const transactions = await fetchTransactions();
-  const balances = await fetchBalances();
-  if (process.argv[2] !== '--public')
-    console.log(balances.map(balance => balance.name));
+  const transactions = await fetchTransactions(isPublic);
+  const balances = await fetchBalances(isPublic);
+  if (isPublic) console.log(balances.map(balance => balance.name));
 
   const transactionUpdates = transformTransactionsToUpdates(transactions);
   const balanceUpdates = transformBalancesToUpdates(balances);
@@ -37,7 +37,7 @@ const { send } = require('./lib/updaters/sms');
 
   await updateTransactions(transactionUpdates);
   await updateBalances(balanceUpdates);
-  await send(smsUpdates, true);
+  await send(smsUpdates);
 
   open(`https://docs.google.com/spreadsheets/d/${process.env.SHEETS_SHEET_ID}`);
 })();
