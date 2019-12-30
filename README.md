@@ -1,5 +1,7 @@
 Note: the below stuff is the instructions from the original [author](https://github.com/yyx990803) with documentation of my own added in. In my opinion, my version has more features and generally meets the financial needs of most people better.
 
+NOTE: I update this documentation *on demand* when people ask me to. Unless you've talked to me, I make no assurances this is up to date (in fact, I can probably assure the opposite). Open an issue and I'll update this.
+
 # Build Your Own Mint
 
 ## Important Disclaimer
