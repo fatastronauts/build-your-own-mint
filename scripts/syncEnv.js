@@ -15,29 +15,29 @@ const FILTERED_VARIABLES = [
 ];
 
 const deleteCurrentEnvironmentVariables = async () => {
-  const envVars = (await (await fetch(
-    `https://circleci.com/api/v1.1/project/github/${GITHUB_USERNAME}/${GITHUB_PROJECT}/envvar?circle-token=${CIRCLE_CI_TOKEN}`,
-    { method: 'get' },
-  )).json()).map(el => [el.name, el.value]);
+  const envVars = await (
+    await fetch(
+      `https://circleci.com/api/v1.1/project/github/${GITHUB_USERNAME}/${GITHUB_PROJECT}/envvar?circle-token=${CIRCLE_CI_TOKEN}`,
+      { method: 'get' },
+    )
+  ).json();
 
-  for (let [key, val] of envVars) {
+  for (let { name, value } of envVars) {
     try {
       await fetch(
-        `https://circleci.com/api/v1.1/project/github/${GITHUB_USERNAME}/${GITHUB_PROJECT}/envvar/${key}?circle-token=${CIRCLE_CI_TOKEN}`,
+        `https://circleci.com/api/v1.1/project/github/${GITHUB_USERNAME}/${GITHUB_PROJECT}/envvar/${name}?circle-token=${CIRCLE_CI_TOKEN}`,
         { method: 'DELETE' },
       );
-      console.log(`Successfully deleted ${key}: ${val}`);
+      console.log(`Successfully deleted ${name}: ${value}`);
     } catch (err) {
-      console.log(`Failed to delete ${key}: ${val}`);
+      console.log(`Failed to delete ${name}: ${value}`);
     }
   }
 
   console.log('Finished deleting env vars');
 };
 
-// deleteCurrentEnvironmentVariables();
-
-const updateSingleToken = async (name, value) => {
+const updateSingleToken = async nameValToken => {
   console.log(
     'Updated this pair: ' +
       JSON.stringify(
@@ -45,7 +45,7 @@ const updateSingleToken = async (name, value) => {
           `https://circleci.com/api/v1.1/project/github/${GITHUB_USERNAME}/${GITHUB_PROJECT}/envvar?circle-token=${CIRCLE_CI_TOKEN}`,
           {
             method: 'post',
-            body: JSON.stringify({ name, value }),
+            body: JSON.stringify(nameValToken),
             headers: { 'Content-Type': 'application/json' },
           },
         ).then(res => res.json()),
@@ -67,12 +67,12 @@ const syncAllVariables = async () => {
         obj[key] = envVars[key];
         return obj;
       }, {}),
-  ).map(arr => {
-    return { name: arr[0], value: arr[1] };
+  ).map(([name, value]) => {
+    return { name, value };
   });
 
   for (let i = 0; i < filteredPairs.length; i++) {
-    await updateSingleToken(filteredPairs[i].name, filteredPairs[i].value);
+    await updateSingleToken(filteredPairs[i]);
   }
 };
 
