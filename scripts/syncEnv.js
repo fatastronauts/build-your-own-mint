@@ -14,6 +14,29 @@ const FILTERED_VARIABLES = [
   'GITHUB_PROJECT',
 ];
 
+const deleteCurrentEnvironmentVariables = async () => {
+  const envVars = (await (await fetch(
+    `https://circleci.com/api/v1.1/project/github/${GITHUB_USERNAME}/${GITHUB_PROJECT}/envvar?circle-token=${CIRCLE_CI_TOKEN}`,
+    { method: 'get' },
+  )).json()).map(el => [el.name, el.value]);
+
+  for (let [key, val] of envVars) {
+    try {
+      await fetch(
+        `https://circleci.com/api/v1.1/project/github/${GITHUB_USERNAME}/${GITHUB_PROJECT}/envvar/${key}?circle-token=${CIRCLE_CI_TOKEN}`,
+        { method: 'DELETE' },
+      );
+      console.log(`Successfully deleted ${key}: ${val}`);
+    } catch (err) {
+      console.log(`Failed to delete ${key}: ${val}`);
+    }
+  }
+
+  console.log('Finished deleting env vars');
+};
+
+// deleteCurrentEnvironmentVariables();
+
 const updateSingleToken = async (name, value) => {
   console.log(
     'Updated this pair: ' +
@@ -31,6 +54,8 @@ const updateSingleToken = async (name, value) => {
 };
 
 const syncAllVariables = async () => {
+  await deleteCurrentEnvironmentVariables(); // clear out current env vars
+
   const envPath = path.resolve(__dirname, '../.env');
   const envVars = dotenv.parse(fs.readFileSync(envPath));
 
