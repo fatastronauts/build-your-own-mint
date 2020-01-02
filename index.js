@@ -18,19 +18,19 @@ const { send } = require('./lib/updaters/sms');
 
 (async () => {
   console.log('Starting Plaid retrieval and writing process');
-  const isPublic = process.argv[2] !== '--public'; // not public -> private
+  const isPrivate = process.argv[2] !== '--public'; // not public -> private
+  const last = await getLastTransactionUpdateTime();
+
   // since this is often run in circleci free, it's probably wise to not log private stuff
-  if (isPublic) {
-    const last = await getLastTransactionUpdateTime();
-    console.log('last', last.format());
-  } else
+  if (isPrivate) console.log('last', last.format());
+  else
     console.log(
       'Running in public mode, suppressing logs with potentially private information.',
     );
 
-  const transactions = await fetchTransactions(isPublic);
-  const balances = await fetchBalances(isPublic);
-  if (isPublic) console.table(balances, ['name']);
+  const transactions = await fetchTransactions(isPrivate);
+  const balances = await fetchBalances(isPrivate);
+  if (isPrivate) console.table(balances, ['name']);
 
   const transactionUpdates = transformTransactionsToUpdates(transactions);
   const balanceUpdates = transformBalancesToUpdates(balances);
@@ -40,6 +40,6 @@ const { send } = require('./lib/updaters/sms');
   await updateBalances(balanceUpdates);
   await send(smsUpdates);
 
-  if (isPublic)
+  if (isPrivate)
     open(`https://docs.google.com/spreadsheets/d/${process.env.SHEETS_SHEET_ID}`);
 })();
