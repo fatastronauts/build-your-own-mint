@@ -30,7 +30,7 @@ const { send } = require('./lib/updaters/sms');
 
   const transactions = await fetchTransactions(isPublic);
   const balances = await fetchBalances(isPublic);
-  if (isPublic) console.log(balances.map(balance => balance.name));
+  if (isPublic) console.table(balances, ['name']);
 
   const transactionUpdates = transformTransactionsToUpdates(transactions);
   const balanceUpdates = transformBalancesToUpdates(balances);
@@ -40,5 +40,6 @@ const { send } = require('./lib/updaters/sms');
   await updateBalances(balanceUpdates);
   await send(smsUpdates);
 
-  open(`https://docs.google.com/spreadsheets/d/${process.env.SHEETS_SHEET_ID}`);
+  if (isPublic)
+    open(`https://docs.google.com/spreadsheets/d/${process.env.SHEETS_SHEET_ID}`);
 })();

@@ -21,8 +21,7 @@ const rl = readline.createInterface({
 rl.question('Enter the code from that page here: ', code => {
   rl.close();
   oAuth2Client.getToken(code, (err, token) => {
-    if (err)
-      return console.error('Error while trying to retrieve access token', err);
+    if (err) return console.error('Error while trying to retrieve access token', err);
 
     let vars = {};
     const tokenEnvVars = Object.keys(token).forEach(key => {

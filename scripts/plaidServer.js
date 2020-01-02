@@ -214,10 +214,7 @@ app.get('/item', function(request, response, next) {
       });
     }
     // Also pull information about the institution
-    client.getInstitutionById(itemResponse.item.institution_id, function(
-      err,
-      instRes,
-    ) {
+    client.getInstitutionById(itemResponse.item.institution_id, function(err, instRes) {
       if (err != null) {
         var msg = 'Unable to pull institution information from the Plaid API.';
         console.log(msg + '\n' + JSON.stringify(error));
@@ -259,10 +256,7 @@ var respondWithAssetReport = (
     });
   }
 
-  client.getAssetReport(assetReportToken, function(
-    error,
-    assetReportGetResponse,
-  ) {
+  client.getAssetReport(assetReportToken, function(error, assetReportGetResponse) {
     if (error != null) {
       prettyPrintResponse(error);
       if (error.error_code == 'PRODUCT_NOT_READY') {
