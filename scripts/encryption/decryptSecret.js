@@ -19,6 +19,6 @@ const encryptedAccountContents = fs.readFileSync(toReadPath, {
     .then(plaintext => {
       const decrypted = plaintext.data;
       fs.writeFileSync(toWritePath, decrypted);
-      console.log('Written decrypted to: ' + toWritePath);
+      console.log('Wrote decrypted to: ' + toWritePath);
     });
 })();
