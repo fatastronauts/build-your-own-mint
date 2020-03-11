@@ -19,7 +19,6 @@ const { send } = require('./lib/updaters/sms');
 (async () => {
   console.log('Starting Plaid retrieval and writing process');
   const isPrivate = process.argv[2] !== '--public'; // not public -> private
-  const last = await getLastTransactionUpdateTime();
 
   // since this is often run in circleci free, it's probably wise to not log private stuff
   if (!isPrivate)
