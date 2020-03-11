@@ -22,8 +22,7 @@ const { send } = require('./lib/updaters/sms');
   const last = await getLastTransactionUpdateTime();
 
   // since this is often run in circleci free, it's probably wise to not log private stuff
-  if (isPrivate) console.log('last', last.format());
-  else
+  if (!isPrivate)
     console.log(
       'Running in public mode, suppressing logs with potentially private information.',
     );
