@@ -1,10 +1,9 @@
 require('dotenv').config();
 
-const fs = require('fs');
-const path = require('path');
-const readline = require('readline');
-const oAuth2Client = require('../lib/googleClient');
-const saveEnv = require('./saveEnv');
+import readline from 'readline';
+import oAuth2Client from '../lib/updaters/googleClient';
+import saveEnv from './saveEnv';
+import { Credentials } from 'google-auth-library';
 
 const authUrl = oAuth2Client.generateAuthUrl({
   access_type: 'offline',
@@ -22,10 +21,11 @@ rl.question('Enter the code from that page here: ', code => {
   rl.close();
   oAuth2Client.getToken(code, (err, token) => {
     if (err) return console.error('Error while trying to retrieve access token', err);
+    if (token == null) return console.error('Got a null access token returned', err);
 
-    let vars = {};
-    const tokenEnvVars = Object.keys(token).forEach(key => {
-      vars[`SHEETS_${key.toUpperCase()}`] = token[key];
+    const vars: { [index: string]: string } = {};
+    (Object.keys(token) as Array<keyof Credentials>).forEach((key: keyof Credentials) => {
+      vars[`SHEETS_${key.toUpperCase()}`] = token[key] as string;
     });
 
     saveEnv(vars);

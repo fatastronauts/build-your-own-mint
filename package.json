@@ -19,10 +19,10 @@
     "encrypt": "ts-node scripts/encryption/encryptSecret.ts",
     "get-private": "ts-node lib/index.ts",
     "debug": "ts-node --nolazy --inspect-brk=9229 lib/index.ts",
-    "test-plaid": "node scripts/testPlaid.js",
-    "test-sheets": "node scripts/testSheets.js",
+    "test-plaid": "ts-node scripts/testPlaid.ts",
+    "test-sheets": "ts-node scripts/testSheets.ts",
     "token-plaid": "ts-node scripts/plaidServer.ts",
-    "token-sheets": "node scripts/getSheetsToken.js",
+    "token-sheets": "ts-node scripts/getSheetsToken.ts",
     "push-env": "ts-node scripts/pushEnv.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },

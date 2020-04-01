@@ -31,7 +31,7 @@ export const updateTransactions = async (updates: TransactionSheetUpdate[]) => {
       },
     });
 
-    console.log(`Success! ${totalUpdatedCells} balance cells updated.`);
+    console.log(`Success! ${totalUpdatedCells} transation cells updated.`);
   } catch (err) {
     console.error('Updating transactions in google sheets failed');
   }
@@ -56,7 +56,7 @@ export const updateBalances = async (updateObject: BalanceSheetUpdate) => {
         // })),
       },
     });
-    console.log(`Success! ${data.updates?.updatedCells} transaction cells updated.`);
+    console.log(`Success! ${data.updates?.updatedCells} balances cells updated.`);
   } catch (err) {
     console.error('Updating balances in google sheets failed');
   }

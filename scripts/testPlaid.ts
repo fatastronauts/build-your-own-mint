@@ -1,8 +1,5 @@
 require('dotenv').config();
-
-const path = require('path');
-const { writeFile } = require('fs-extra');
-const { fetchTransactions } = require('../lib/fetch');
+import { fetchTransactions } from '../lib/fetch';
 
 (async () => {
   const res = await fetchTransactions();

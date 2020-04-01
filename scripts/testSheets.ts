@@ -1,6 +1,5 @@
 require('dotenv').config();
-
-const { updateTransactions } = require('../lib/updaters/gsheets');
+import { updateTransactions } from '../lib/updaters/gsheets';
 
 // sloppy but it works
 // I wouldn't necessarily call this a supported use of that API.
