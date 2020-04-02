@@ -79,9 +79,7 @@ export const transformBalancesToUpdates = (balances: MyBalance[]): BalanceSheetU
     if (idx === -1) throw new Error('CANNOT FIND THIS ACCOUNT IN MAPPING');
 
     rtn.values[0][idx] =
-      account.type === 'depository'
-        ? Number(account.balance).toString()
-        : -Number(account.balance).toString();
+      account.type === 'depository' ? Number(account.balance) : -Number(account.balance);
 
     // prior line guarantees they'll be numbers
     if (rtn.values[0][idx] > 0) have += rtn.values[0][idx] as number;
