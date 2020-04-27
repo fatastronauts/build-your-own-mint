@@ -24,7 +24,7 @@ import express, { Response } from 'express';
 import bodyParser from 'body-parser';
 
 import client from '../lib/plaidClient';
-const saveEnv = require('./saveEnv');
+import saveEnv from './saveEnv';
 
 const app = express();
 app.use(express.static(resolve(__dirname)));
