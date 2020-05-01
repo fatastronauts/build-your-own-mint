@@ -32,7 +32,7 @@ First things first - rename `.env.sample` to `.env`. Variables in this file will
 
 ### Google Sheets
 
-> I use a Google Sheet because it's convenient. If you don't trust Google or want to build your own fancy interface, you can totally do that - but that's out of scope for this demo.
+> I use a Google Sheet because it's convenient. If you don't trust Google or want to build your own fancy interface, you can totally do that - but that's out of scope for this project.
 
 - First, create a Google Sheets spreadsheet, and save its ID in `.env` as `SHEETS_SHEET_ID`.
 
@@ -47,23 +47,34 @@ First things first - rename `.env.sample` to `.env`. Variables in this file will
 - Now run `npm run test-sheets`. You should see your sheet's cell A1 with "It worked!".
 
 ## Transform your Data
+Note: the exact sheet names here are very important.
 
-I've already written the transform logic for the repo. You want to have your spreadsheet contain two sheets. One of them (called `transactions`) should have the following headers: Date,Account,Description,Amount,Type,Category1,Category2,Category3,Category4,Retrieval String.
+I've already written the transform logic for the repo. You want to have your spreadsheet contain two sheets. One of them (called `transactions`) should have the following headers: Date,Account,Description,Amount,Type,Category1,Category2,Category3,Category4,Device,Time Retrieved.
 
-You should have another sheet (called `balances`). This one is a little more tricky. Run `npm run get-setup`. It should give an error but before it does, it should print out an array of your bank accounts that should look familiar to you. Now, create a json that has each account's name (_exactly_ as it appears) as the key and a unique column (anything that is C or greater) in the balances sheets as the value. It should look something like this:
+You should have another sheet (called `balances`). This one is a little more tricky. Run `npm run get-private`. It should give an error but before it does, it should print out an array of your bank accounts that should look familiar to you. You can have multiple accounts per institutions (i.e. if you have a credit card and a checking account from a bank).
+
+Now, create a json that has each account's name (_exactly_ as it appears) as the key and a unique column (anything that is C or greater) in the balances sheets as the value. This column is where that institution's balance will be printed.  It should look something like this:
 
 ```
 {
-    "Bank1": "C",
-    "Bank2": "D",
+    "Account1": "C",
+    "Account2": "D",
     ... etc
 }
 
 ```
 
-This JSON shows where each account goes in the sheet. Minify that JSON (if you google "minify json", you'll find many options. Note that I don't vouch for the security or trustworthiness of any of them) and set `ACCOUNT_MAPPING` in your `.env` to that minified JSON. Be very careful to not paste this in a js file or really anything but your `.env` - you don't want to tell the world what financial products you use.
+This JSON shows where each account goes in the sheet. Now, create a file at `lib/accounts.secret.ts`. That file should look like this:
 
-After this, `npm run get` should populate the transactions and balances sheet whenever it's run. Note that `npm run get` logs no private information which is helpful if you use the CI feature below on a free plan.
+```
+/* eslint-disable */
+export default {
+    "Account1": "C",
+    "Account2": "D",
+} 
+```
+
+After this, `npm run get-private` AND `npm run get` should populate the transactions and balances sheet whenever it's run. Note that `npm run get` logs no private information which is helpful if you use the CI feature below on a free plan. `get-private` does log private information and should be used only on trusted machines.
 
 ## Texting
 
@@ -73,8 +84,22 @@ If you are interested, go create a Twilio account and follow the instructions [h
 
 This feature will text you everytime the script is run. It works best with CircleCI (below). I've found it helpful for displining my spending by forcing me to be aware of how much I have and am spending.
 
+You will be texted only if ENABLE_SMS is "true" OR you're in a "nightly" CircleCi job and ENABLE_SMS is not "false".
+
 ## Automate the Updates
 
-The repo contains a [CircleCI](https://circleci.com/) config file which runs the update every day at 14PM UTC (8AM America/Chicago). You can adjust the cron config to tweak the time/frequency of the updates. Note that your local `.env` is not checked into the repo, so you will need to copy all those env variables into your CircleCI project settings.
+The repo contains a [CircleCI](https://circleci.com/) config file which runs the update every day at 14PM UTC (8AM America/Chicago). 
 
-This is totally optional if you don't trust CI with your tokens. Just run it manually when you want to update things.
+This is totally optional if you don't trust CI with your tokens. Just run it manually when you want to update things. If you do want to use CircleCI, here's how:
+
+1. Change the time (if you'd like) in the `.circleci/config.yml` file. 
+2. Set your GitHub username, project name, and default branch name in the env file
+3. Delete `./accounts.public.txt`
+4. Set up the basic project in CircleCI and run it. It should fail.
+5. Get an API token from CircleCI and set it in the env file
+6. Create a random string and set it to ACCOUNTS_PASSWORD.
+7. Run `npm run push-env` to sync over your environment to the CircleCI environment
+8. Run `ts-node scripts/encryptSecret.ts`. This will use your ACCOUNTS_PASSWORD to encrypt your account mapping (the thing you made earlier in `lib/accounts.secret.ts`) and write it to `./accounts.public.txt`. Since it's encrypted, no one can read it without your ACCOUNTS_PASSWORD even though it'll be public. 
+9. `git push`
+
+As your Plaid tokens expire, you can always `push-env`. As you get rid of or get new bank accounts, change your secret bank account mapping, encrypt it, and push it. 
