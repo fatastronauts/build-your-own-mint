@@ -114,7 +114,7 @@ export const fetchBalances = async (isPrivate = true): Promise<MyBalance[]> => {
     }
   }
 
-  if (isPrivate)
+  if (isPrivate && failures.length !== 0)
     console.error(`Could not fetching the following balances: ${failures.join(', ')}`);
 
   return rawBalances.flatMap(({ accounts }) =>
