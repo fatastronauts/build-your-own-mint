@@ -103,7 +103,9 @@ export interface MyBalance {
   subtype: string | null;
 }
 
-export const fetchBalances = async (isPrivate = true): Promise<MyBalance[]> => {
+export const fetchBalances = async (
+  isPrivate = true,
+): Promise<{ isError: boolean; balances: MyBalance[] }> => {
   const rawBalances = []; // this will be an array by institution
   const failures = [];
   for (const { account, token } of plaidAccountTokens) {
@@ -120,12 +122,15 @@ export const fetchBalances = async (isPrivate = true): Promise<MyBalance[]> => {
     );
 
   // flat map to turn an array of institutions into an array of accounts
-  return rawBalances.flatMap(({ accounts }) =>
-    accounts.map(({ balances, official_name, name, type, subtype }) => ({
-      balance: balances.current,
-      name: (official_name == null ? name : official_name) as string,
-      subtype,
-      type,
-    })),
-  );
+  return {
+    balances: rawBalances.flatMap(({ accounts }) =>
+      accounts.map(({ balances, official_name, name, type, subtype }) => ({
+        balance: balances.current,
+        name: (official_name == null ? name : official_name) as string,
+        subtype,
+        type,
+      })),
+    ),
+    isError: failures.length !== 0, // so we can handle summing and such differently
+  };
 };

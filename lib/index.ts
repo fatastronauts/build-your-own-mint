@@ -34,11 +34,11 @@ import { send } from './updaters/sms';
     console.info('Start fetching balances!');
 
     // fetch and log balances
-    const balances = await fetchBalances(isPrivate);
+    const { balances, isError: isFetchError } = await fetchBalances(isPrivate);
     if (isPrivate) console.table(balances, ['name']);
 
     // transform and update with balances
-    const balanceUpdates = transformBalancesToUpdates(balances);
+    const balanceUpdates = transformBalancesToUpdates(balances, isFetchError);
     const smsUpdates = transformBalancesToSMSData(balances);
     await updateBalances(balanceUpdates);
     await send(smsUpdates);

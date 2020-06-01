@@ -58,7 +58,10 @@ export interface BalanceSheetUpdate {
   values: (string | number)[][];
 }
 // TODO: inlcude has error to not print have, owed, have+owed?
-export const transformBalancesToUpdates = (balances: MyBalance[]): BalanceSheetUpdate => {
+export const transformBalancesToUpdates = (
+  balances: MyBalance[],
+  isFetchError = false,
+): BalanceSheetUpdate => {
   const rtn: BalanceSheetUpdate = {
     range: `${SHEET_NAMES.BALANCES}!A1:${ALPHABET[balances.length + 3]}1`,
     values: [
@@ -87,7 +90,7 @@ export const transformBalancesToUpdates = (balances: MyBalance[]): BalanceSheetU
   });
 
   // used to previously have unused accounts be marked as zero. Now just let the series fall off.
-  rtn.values[0].push(have, owed, have + owed);
+  if (!isFetchError) rtn.values[0].push(have, owed, have + owed);
   return rtn;
 };
 
