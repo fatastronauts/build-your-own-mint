@@ -87,7 +87,6 @@ export const transformBalancesToUpdates = (balances: MyBalance[]): BalanceSheetU
   });
 
   // used to previously have unused accounts be marked as zero. Now just let the series fall off.
-
   rtn.values[0].push(have, owed, have + owed);
   return rtn;
 };

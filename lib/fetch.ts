@@ -104,7 +104,7 @@ export interface MyBalance {
 }
 
 export const fetchBalances = async (isPrivate = true): Promise<MyBalance[]> => {
-  const rawBalances = [];
+  const rawBalances = []; // this will be an array by institution
   const failures = [];
   for (const { account, token } of plaidAccountTokens) {
     try {
@@ -115,8 +115,11 @@ export const fetchBalances = async (isPrivate = true): Promise<MyBalance[]> => {
   }
 
   if (isPrivate && failures.length !== 0)
-    console.error(`Could not fetching the following balances: ${failures.join(', ')}`);
+    console.error(
+      `Could not fetching the following institutions: ${failures.join(', ')}`,
+    );
 
+  // flat map to turn an array of institutions into an array of accounts
   return rawBalances.flatMap(({ accounts }) =>
     accounts.map(({ balances, official_name, name, type, subtype }) => ({
       balance: balances.current,
