@@ -1,5 +1,5 @@
-/* eslint-disable */
-require('dotenv').config();
+import {config} from 'dotenv';
+config();
 
 const account = process.argv[2];
 if (!account) {

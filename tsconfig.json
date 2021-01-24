@@ -4,8 +4,7 @@
     "noEmit": true,
     "strictNullChecks": true,
     "esModuleInterop": true,
-    "moduleResolution": "node",
-    "lib": ["ESNext"]
+    "lib": ["ES2020"]
   },
   "include": ["lib/**/*.ts", "scripts/**/*.ts"],
   "exclude": ["node_modules/"]
