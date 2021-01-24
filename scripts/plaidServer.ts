@@ -37,7 +37,7 @@ app.use(
 );
 app.use(bodyParser.json());
 
-app.get('/', (req, res, next) => {
+app.get('/', (req, res) => {
   res.render(resolve(__dirname, 'plaid.ejs'), {
     PLAID_ACCOUNT: account,
     PLAID_PUBLIC_KEY: process.env.PLAID_PUBLIC_KEY,
@@ -62,7 +62,7 @@ function saveAccessToken(token: string) {
 // Exchange token flow - exchange a Link public_token for
 // an API access_token
 // https://plaid.com/docs/#exchange-token-flow
-app.post('/get_access_token', function(request, response, next) {
+app.post('/get_access_token', function(request, response) {
   PUBLIC_TOKEN = request.body.public_token;
   client.exchangePublicToken(PUBLIC_TOKEN, function(error, tokenResponse) {
     if (error != null) {
@@ -85,7 +85,7 @@ app.post('/get_access_token', function(request, response, next) {
 
 // Retrieve Transactions for an Item
 // https://plaid.com/docs/#transactions
-app.get('/transactions', function(request, response, next) {
+app.get('/transactions', function(request, response) {
   // Pull transactions for the Item for the last 30 days
   const startDate = moment()
     .subtract(30, 'days')
@@ -115,7 +115,7 @@ app.get('/transactions', function(request, response, next) {
 
 // Retrieve Identity for an Item
 // https://plaid.com/docs/#identity
-app.get('/identity', function(request, response, next) {
+app.get('/identity', function(request, response) {
   client.getIdentity(ACCESS_TOKEN, function(
     error: Error,
     identityResponse: IdentityResponse,
@@ -133,7 +133,7 @@ app.get('/identity', function(request, response, next) {
 
 // Retrieve real-time Balances for each of an Item's accounts
 // https://plaid.com/docs/#balance
-app.get('/balance', function(request, response, next) {
+app.get('/balance', function(request, response) {
   client.getBalance(ACCESS_TOKEN, function(
     error: Error,
     balanceResponse: AccountsResponse,
@@ -151,7 +151,7 @@ app.get('/balance', function(request, response, next) {
 
 // Retrieve an Item's accounts
 // https://plaid.com/docs/#accounts
-app.get('/accounts', function(request, response, next) {
+app.get('/accounts', function(request, response) {
   client.getAccounts(ACCESS_TOKEN, function(
     error: Error,
     accountsResponse: AccountsResponse,
@@ -169,7 +169,7 @@ app.get('/accounts', function(request, response, next) {
 
 // Retrieve ACH or ETF Auth data for an Item's accounts
 // https://plaid.com/docs/#auth
-app.get('/auth', function(request, response, next) {
+app.get('/auth', function(request, response) {
   client.getAuth(ACCESS_TOKEN, function(error: Error, authResponse: AuthResponse) {
     if (error != null) {
       prettyPrintResponse(error);
@@ -186,7 +186,7 @@ app.get('/auth', function(request, response, next) {
 // Asset Report can contain up to 100 items, but for simplicity we're only
 // including one Item here.
 // https://plaid.com/docs/#assets
-app.get('/assets', function(request, response, next) {
+app.get('/assets', function(request, response) {
   // You can specify up to two years of transaction history for an Asset
   // Report.
   const daysRequested = 10;
@@ -226,7 +226,7 @@ app.get('/assets', function(request, response, next) {
 
 // Retrieve information about an Item
 // https://plaid.com/docs/#retrieve-item
-app.get('/item', function(request, response, next) {
+app.get('/item', function(request, response) {
   // Pull the Item - this includes information about available products,
   // billed products, webhook information, and more.
   client.getItem(ACCESS_TOKEN, function(error: Error, itemResponse: ItemResponse) {
@@ -262,6 +262,7 @@ app.listen(APP_PORT, function() {
   console.log(`Server started at http://localhost:${APP_PORT}`);
 });
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const prettyPrintResponse = (response: Record<string, any>) => {
   console.log(inspect(response, { colors: true, depth: 4 }));
 };
@@ -326,7 +327,7 @@ const respondWithAssetReport = (
   });
 };
 
-app.post('/set_access_token', function(request, response, next) {
+app.post('/set_access_token', function(request, response) {
   ACCESS_TOKEN = request.body.access_token;
   client.getItem(ACCESS_TOKEN, function(error: Error, itemResponse: ItemResponse) {
     response.json({
