@@ -1,4 +1,4 @@
-import {config} from 'dotenv';
+import { config } from 'dotenv';
 config();
 
 const account = process.argv[2];
@@ -16,6 +16,7 @@ import {
   AssetReportGetResponse,
   GetInstitutionByIdResponse,
   Institution,
+  PlaidError,
 } from 'plaid';
 import { inspect } from 'util';
 import { resolve } from 'path';
@@ -76,8 +77,8 @@ app.post('/get_access_token', function(request, response, next) {
     prettyPrintResponse(tokenResponse);
     response.json({
       access_token: ACCESS_TOKEN,
-      item_id: ITEM_ID,
       error: null,
+      item_id: ITEM_ID,
     });
   });
 });
@@ -144,7 +145,7 @@ app.get('/balance', function(request, response, next) {
       });
     }
     prettyPrintResponse(balanceResponse);
-    response.json({ error: null, balance: balanceResponse });
+    response.json({ balance: balanceResponse, error: null });
   });
 });
 
@@ -162,7 +163,7 @@ app.get('/accounts', function(request, response, next) {
       });
     }
     prettyPrintResponse(accountsResponse);
-    response.json({ error: null, accounts: accountsResponse });
+    response.json({ accounts: accountsResponse, error: null });
   });
 });
 
@@ -177,7 +178,7 @@ app.get('/auth', function(request, response, next) {
       });
     }
     prettyPrintResponse(authResponse);
-    response.json({ error: null, auth: authResponse });
+    response.json({ auth: authResponse, error: null });
   });
 });
 
@@ -198,12 +199,12 @@ app.get('/assets', function(request, response, next) {
     // webhook: 'https://your-domain.tld/plaid-webhook',
     user: {
       client_user_id: 'Custom User ID #456',
-      first_name: 'Alice',
-      middle_name: 'Bobcat',
-      last_name: 'Cranberry',
-      ssn: '123-45-6789',
-      phone_number: '555-123-4567',
       email: 'alice@example.com',
+      first_name: 'Alice',
+      last_name: 'Cranberry',
+      middle_name: 'Bobcat',
+      phone_number: '555-123-4567',
+      ssn: '123-45-6789',
     },
   };
   client.createAssetReport([ACCESS_TOKEN], daysRequested, options, function(
@@ -249,8 +250,8 @@ app.get('/item', function(request, response, next) {
       } else {
         prettyPrintResponse(itemResponse);
         response.json({
-          item: itemResponse.item,
           institution: instRes.institution,
+          item: itemResponse.item,
         });
       }
     });
@@ -261,7 +262,7 @@ app.listen(APP_PORT, function() {
   console.log(`Server started at http://localhost:${APP_PORT}`);
 });
 
-var prettyPrintResponse = (response: Record<string, any>) => {
+const prettyPrintResponse = (response: Record<string, any>) => {
   console.log(inspect(response, { colors: true, depth: 4 }));
 };
 
@@ -269,7 +270,7 @@ var prettyPrintResponse = (response: Record<string, any>) => {
 // then send it in the response to the client. Alternatively, you can provide a
 // webhook in the `options` object in your `/asset_report/create` request to be
 // notified when the Asset Report is finished being generated.
-var respondWithAssetReport = (
+const respondWithAssetReport = (
   numRetriesRemaining: number,
   assetReportToken: string,
   client: PlaidClient,
@@ -287,9 +288,7 @@ var respondWithAssetReport = (
   ) {
     if (error != null) {
       prettyPrintResponse(error);
-      // have to ts ignore here because this code expects a PlaidError but the function signature wants a normal Error
-      // @ts-ignore
-      if (error.error_code == 'PRODUCT_NOT_READY') {
+      if ((error as PlaidError).error_code == 'PRODUCT_NOT_READY') {
         setTimeout(
           () =>
             respondWithAssetReport(
@@ -331,8 +330,8 @@ app.post('/set_access_token', function(request, response, next) {
   ACCESS_TOKEN = request.body.access_token;
   client.getItem(ACCESS_TOKEN, function(error: Error, itemResponse: ItemResponse) {
     response.json({
-      item_id: itemResponse.item.item_id,
       error: false,
+      item_id: itemResponse.item.item_id,
     });
   });
 });

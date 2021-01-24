@@ -14,5 +14,6 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 0,
     '@typescript-eslint/camelcase': 0, // plaid and google use non camelcase too often
     'sort-keys-fix/sort-keys-fix': 'error',
+    '@typescript-eslint/no-use-before-define': 0
   },
 };
