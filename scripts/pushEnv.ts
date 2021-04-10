@@ -22,13 +22,18 @@ interface NameValPair {
   value: string;
 }
 
-const deleteCurrentEnvironmentVariables = async () => {
+const deleteCurrentEnvironmentVariables = async (prevNumberEnvVars: number) => {
   const envVars = await (
     await fetch(
       `https://circleci.com/api/v1.1/project/github/${GITHUB_USERNAME}/${GITHUB_PROJECT}/envvar?circle-token=${CIRCLE_CI_TOKEN}`,
       { method: 'GET' },
     )
   ).json();
+
+  if (envVars.length > prevNumberEnvVars && process.env.IGNORE_MORE_ENV_VARS !== '1')
+    throw new Error(
+      'Remote has more env vars than local, this is a no-op unless you set IGNORE_MORE_ENV_VARS=1',
+    );
 
   for (const { name, value } of envVars) {
     try {
@@ -62,10 +67,12 @@ const updateSingleToken = async (nameValToken: NameValPair) => {
 };
 
 const syncAllVariables = async () => {
-  await deleteCurrentEnvironmentVariables(); // clear out current env vars
-
   const envPath = pathResolve(__dirname, '../.env');
   const envVars = dotenvParse(readFileSync(envPath));
+
+  await deleteCurrentEnvironmentVariables(
+    Object.keys(envVars).length - filteredVariables.length,
+  ); // clear out current env vars
 
   // don't sync certain variables
   for (const key in envVars) if (filteredVariables.includes(key)) delete envVars[key];
