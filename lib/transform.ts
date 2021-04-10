@@ -77,9 +77,14 @@ export const transformBalancesToUpdates = (
   let have = 0,
     owed = 0;
 
+  const unknown = 'UNKNOWN';
   balances.forEach(account => {
+    account.name = account.name.trim();
+    if (account.name.length === 0) account.name = unknown;
+
     const idx = ALPHABET.indexOf(accountMapping.get(account.name));
-    if (idx === -1) throw new Error('CANNOT FIND THIS ACCOUNT IN MAPPING');
+    if (idx === -1 && account.name !== unknown)
+      throw new Error('CANNOT FIND THIS ACCOUNT IN MAPPING');
 
     rtn.values[0][idx] =
       account.type === 'depository' ? Number(account.balance) : -Number(account.balance);
