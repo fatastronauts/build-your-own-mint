@@ -22,10 +22,18 @@ import { inspect } from 'util';
 import { resolve } from 'path';
 import moment = require('moment');
 import express, { Response } from 'express';
-import bodyParser from 'body-parser';
+import { log } from 'isomorphic-git';
 
 import client from '../lib/plaidClient';
 import saveEnv from './saveEnv';
+import * as fs from 'fs';
+
+// use current git commit as userId to uniquely identify req
+let gitCommit: string;
+
+log({ depth: 1, dir: './', fs }).then(res => {
+  gitCommit = res[0].commit.tree;
+});
 
 const app = express();
 app.use(express.static(resolve(__dirname)));
@@ -40,7 +48,6 @@ app.use(express.json());
 app.get('/', (req, res) => {
   res.render(resolve(__dirname, 'plaid.ejs'), {
     PLAID_ACCOUNT: account,
-    PLAID_PUBLIC_KEY: process.env.PLAID_PUBLIC_KEY,
   });
 });
 
@@ -198,7 +205,7 @@ app.get('/assets', function(request, response) {
     client_report_id: 'Custom Report ID #123',
     // webhook: 'https://your-domain.tld/plaid-webhook',
     user: {
-      client_user_id: 'Custom User ID #456',
+      client_user_id: gitCommit,
       email: 'alice@example.com',
       first_name: 'Alice',
       last_name: 'Cranberry',
@@ -236,8 +243,9 @@ app.get('/item', function(request, response) {
         error: error,
       });
     }
+
     // Also pull information about the institution
-    client.getInstitutionById(itemResponse.item.institution_id, function(
+    client.getInstitutionById(itemResponse.item.institution_id, ['US'], {}, function(
       err: Error,
       instRes: GetInstitutionByIdResponse<Institution>,
     ) {
@@ -256,6 +264,22 @@ app.get('/item', function(request, response) {
       }
     });
   });
+});
+
+app.post('/create_link_token', async (req, res) => {
+  const linkRes = await client.createLinkToken({
+    client_name: 'bencooper222/build-your-own-mint',
+    country_codes: ['US'],
+    language: 'en',
+    products: ['transactions'],
+    user: {
+      client_user_id: gitCommit,
+    },
+  });
+
+  const linkToken = linkRes.link_token;
+
+  res.json({ linkToken });
 });
 
 app.listen(APP_PORT, function() {
